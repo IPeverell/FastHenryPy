@@ -3,8 +3,10 @@
 
 import numpy as np
 import sys
+from os import getcwd
 
-#assert len(sys.argv) == 6
+#error checking
+assert len(sys.argv) >5, "Enter more than 5 arguments"
 
 def gen_nodes_2d(h,g,w,d):
     r=0.1
@@ -28,7 +30,6 @@ def gen_nodes_2d(h,g,w,d):
     ]
     #return nodes
     #add extra horixontal nodes to replicate curves in 3d space
-    n=20 #number of segments in 
     atbi =[]
     
     for i,[x,y] in enumerate(nodes[:-1]):
@@ -60,7 +61,10 @@ g = 1 #actual gap between coils
 w = 1 #width of coil
 d = 5 #diameter of epr tube ie diameter of coil
 
-nodes = gen_nodes_2d(h,g,w,d)
+h,g,w,d = sys.argv[1:5]
+filename = sys.argv[6]
+n = 30  #number of segments for a curve in 3d space
+nodes = gen_nodes_2d(h,g,w,d,n)
 nodes = proj2dto3d(nodes,d)
 
 #nodes
@@ -82,6 +86,6 @@ script = """
 .end""".format(len(nodes))
 
 
-with open('test.inp', 'w') as f:
+with open(getcwd()+'/'+{filename}+'.inp', 'w') as f:
     f.write(script)
 
