@@ -62,7 +62,7 @@ w = 1 #width of coil
 d = 5 #diameter of epr tube ie diameter of coil
 
 h,g,w,d = sys.argv[1:5]
-filename = sys.argv[6]
+filename = sys.argv[5]
 n = 30  #number of segments for a curve in 3d space
 nodes = gen_nodes_2d(h,g,w,d,n)
 nodes = proj2dto3d(nodes,d)
