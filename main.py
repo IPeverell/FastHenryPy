@@ -63,12 +63,6 @@ d = 5 #diameter of epr tube ie diameter of coil
 nodes = gen_nodes_2d(h,g,w,d)
 nodes = proj2dto3d(nodes,d)
 
-
-# Generate .inp file
-
-# In[16]:
-
-
 #nodes
 script = "\n".join( [f"N{i+1} x={x} y={y} z={z}" for i, [x,y,z] in enumerate(nodes)] )
 
@@ -76,7 +70,7 @@ script = "\n".join( [f"N{i+1} x={x} y={y} z={z}" for i, [x,y,z] in enumerate(nod
 script = script +"\n\n"
 
 #segments
-script = script + "\n".join( [f"E{i+1} N{i+1} N{i+2} w={w} h={h}" for i,[x,y,z] in enumerate(nodes[:-1])] )
+script = script + "\n".join( [f"E{i+1} N{i+1} N{i+2} w=0.038 h=0.1" for i,[x,y,z] in enumerate(nodes[:-1])] )
 
 script = """
 .units mm
