@@ -1,5 +1,6 @@
+import argparse
 import numpy as np
-import sys
+from os import getcwd
 
 class CoilGenerator:
     def __init__(self, h, g, w, d):
@@ -30,7 +31,7 @@ class CoilGenerator:
         ]
 
         # Add extra horizontal nodes to replicate curves in 3D space
-        n = 20  # Number of segments
+        n = 30  # Number of segments
         atbi = []
 
         for i, [x, y] in enumerate(nodes[:-1]):
@@ -81,16 +82,30 @@ class CoilGenerator:
 
     def write_script_to_file(self, filename):
         script = self.generate_script()
-        with open(filename, 'w') as f:
+        with open(ogetcwd() +'/'+filename, 'w') as f:
             f.write(script)
 
 
-# Parameters /mm
-h = 5  # Height
-g = 1  # Actual gap between coils
-w = 1  # Width of coil
-d = 5  # Diameter of epr tube, i.e., diameter of coil
+def main():
+    parser = argparse.ArgumentParser(description='Generate coil script')
+    parser.add_argument('h', type=float, help='height of coil')
+    parser.add_argument('g', type=float, help='actual gap between coils')
+    parser.add_argument('w', type=float, help='width of coil')
+    parser.add_argument('d', type=float, help='diameter of epr tube (coil diameter)')
+    parser.add_argument('filename', help='output filename')
 
-coil_generator = CoilGenerator(h, g, w, d)
-coil_generator.write_script_to_file('test.inp')
+    args = parser.parse_args()
+
+    h = args.h
+    g = args.g
+    w = args.w
+    d = args.d
+    filename = args.filename
+
+    coil_generator = CoilGenerator(h, g, w, d)
+    coil_generator.write_script_to_file(filename)
+
+
+if __name__ == '__main__':
+    main()
 
