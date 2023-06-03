@@ -82,7 +82,7 @@ class CoilGenerator:
 
     def write_script_to_file(self, filename):
         script = self.generate_script()
-        with open(ogetcwd() +'/'+filename, 'w') as f:
+        with open(getcwd() +'/'+filename, 'w') as f:
             f.write(script)
 
 def main():
