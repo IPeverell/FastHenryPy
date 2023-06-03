@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import matplotlib.pyplot as plt
 from os import getcwd
 
 class CoilGenerator:
@@ -11,7 +12,7 @@ class CoilGenerator:
         self.n = n
 
     def gen_nodes_2d(self):
-        r = 0.1
+        r = 0.5
         g_ = self.g + self.w
         l = 0.5 * (np.pi * self.d - g_)
 
@@ -91,20 +92,21 @@ class CoilGenerator:
         ax = fig.add_subplot(111, projection='3d')
 
         nodes_2d = self.gen_nodes_2d()
-        nodes_3d = [self.proj2dto3d(nodes) for nodes in nodes_2d]
+        nodes_3d = self.proj2dto3d(nodes_2d)
+            
+        x_vals = [x for x, _, _ in nodes_3d]
+        y_vals = [y for _, y, _ in nodes_3d]
+        z_vals = [z for _, _, z in nodes_3d]
 
-        for nodes in nodes_3d:
-            x_vals = [x for x, _, _ in nodes]
-            y_vals = [y for _, y, _ in nodes]
-            z_vals = [z for _, _, z in nodes]
-
-            ax.scatter(x_vals, y_vals, z_vals)
+        ax.plot(x_vals, y_vals, z_vals)
 
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
 
         plt.show()
+
+
 
 
 def main():
@@ -125,7 +127,7 @@ def main():
 
     coil_generator = CoilGenerator(h, g, w, d)
     coil_generator.write_script_to_file(filename)
-    coil_generator.plot_nodes()
+    #coil_generator.plot_nodes()
 
-if _ _name__ == '__main__':
+if __name__ == '__main__':
     main()
