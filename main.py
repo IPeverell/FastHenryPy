@@ -1,16 +1,18 @@
 import argparse
 import numpy as np
+import matplotlib.pyplot as plt
 from os import getcwd
 
 class CoilGenerator:
-    def __init__(self, h, g, w, d):
+    def __init__(self, h, g, w, d, n):
         self.h = h
         self.g = g
         self.w = w
         self.d = d
+        self.n = n
 
     def gen_nodes_2d(self):
-        r = 0.1
+        r = 0.5
         g_ = self.g + self.w
         l = 0.5 * (np.pi * self.d - g_)
 
@@ -54,7 +56,7 @@ class CoilGenerator:
 
     def proj2dto3d(self, nodes):
         r = self.d / 2
-        return [[r * np.cos(x / r), r * np.sin(x / r), y] for [x, y] in nodes]
+        return [[r  * np.cos(x / r), r * np.sin(x / r), y] for [x, y] in nodes]
 
     def generate_script(self):
         nodes_2d = self.gen_nodes_2d()
@@ -84,6 +86,28 @@ class CoilGenerator:
         script = self.generate_script()
         with open(getcwd() +'/'+filename, 'w') as f:
             f.write(script)
+    
+    def plot_nodes(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        nodes_2d = self.gen_nodes_2d()
+        nodes_3d = self.proj2dto3d(nodes_2d)
+            
+        x_vals = [x for x, _, _ in nodes_3d]
+        y_vals = [y for _, y, _ in nodes_3d]
+        z_vals = [z for _, _, z in nodes_3d]
+
+        ax.plot(x_vals, y_vals, z_vals)
+
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+
+        plt.show()
+
+
+
 
 def main():
     parser = argparse.ArgumentParser(description='Generate coil script')
@@ -103,7 +127,7 @@ def main():
 
     coil_generator = CoilGenerator(h, g, w, d)
     coil_generator.write_script_to_file(filename)
-
+    #coil_generator.plot_nodes()
 
 if __name__ == '__main__':
     main()
