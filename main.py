@@ -17,7 +17,8 @@ class CoilGenerator:
         l = 0.5 * (np.pi * self.d - g_)
 
         
-        assert self.w < g_ and 2 * self.w < l and self.w < self.h
+        assert self.g > 0 and 2*self.w*self.turns < l and self.w*self.turns < self.h
+        
         # Calculate vertices for n turns
         nodes=[]
         for t in range(1,self.turns+1):
