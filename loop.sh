@@ -10,7 +10,7 @@ do
 			for d in $(seq 3 1 5)
 			do
 				turns=1
-				while [$(echo "(3.14159*$d-$g-$w)/(4*$w)" |bc) -gt $turns] && [ $(echo "$h/$w" |bc) -gt $turns]
+				while [ $(echo "(3.14159*$d-$g-$w)/(4*$w)" |bc) -gt $turns ] && [ $(echo "$h/$w" |bc) -gt $turns ]
 				do
 					mkdir ./$h,$g,$w,5,$turns
 					cd ./$h,$g,$w,5,$turns
