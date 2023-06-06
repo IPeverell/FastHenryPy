@@ -4,54 +4,57 @@ import matplotlib.pyplot as plt
 from os import getcwd
 
 class CoilGenerator:
-    def __init__(self, h, g, w, d, n):
+    def __init__(self, h, g, w, d, turns):
         self.h = h
         self.g = g
         self.w = w
         self.d = d
-        self.n = n
+        self.turns = turns
 
     def gen_nodes_2d(self):
         r = 0.5
         g_ = self.g + self.w
         l = 0.5 * (np.pi * self.d - g_)
 
-        # Calculate nodes for one coil
+        
         assert self.w < g_ and 2 * self.w < l and self.w < self.h
+        # Calculate vertices for n turns
+        nodes=[]
+        for t in range(1,self.turns+1):
+            nodes.append( [ (t-1)*g_, self.h/2-(t-1)*g_ ])
+            nodes.append( [ l-(t-1)*g_, self.h/2-(t-1)*g_ ])
+            nodes.append( [ l-(t-1)*g_, -self.h/2+(t-1)*g_ ])
+            nodes.append( [ t*g_, -self.h/2 +(t-1)*g_ ])
+        nodes.append([self.turns*g_,0])
 
-        nodes = [
-            [g_, r * self.h],
-            [g_, 0],
-            [l, 0],
-            [l, self.h],
-            [0, self.h],
-            [0, 0],
-            [-l, 0],
-            [-l, self.h],
-            [-g_, self.h],
-            [-g_, r * self.h]
-        ]
+        # Add extra horizontal nodes to replicate curves once projected to 3D space
+        s = 30  # Number of segments per horizontal
+        
+        #create nested list of extra nodes
+        atbi =[]
+        for i,[x,y] in enumerate(nodes):
+            if i %2==0 and i +1 != len(nodes):
+                dx =(nodes[i+1][0] -x) /s
+                dy = y - nodes[i+1][1]
+                assert dy ==0,print("Error - not horizontal")
+                atbi.append([[x+k*dx,y] for k in range(1,s)])
 
-        # Add extra horizontal nodes to replicate curves in 3D space
-        n = 30  # Number of segments
-        atbi = []
+        #add in the extra nodes
+        for index, atb in reversed(list(enumerate(atbi))):
+            nodes.insert(2*index+1,atb)
 
-        for i, [x, y] in enumerate(nodes[:-1]):
-            if i % 2 == 1:
-                dx = (nodes[i + 1][0] - x) / n
-                atbi.append([[x + (num) * dx, y] for num in np.arange(1, n)])
+        #flatten nested list:
+        prod=[]
+        for item in nodes:
+            if isinstance(item[0],list):
+                for subitem in item:
+                    prod.append(subitem)
+            else:
+                prod.append(item)
 
-        atbi = [x for _ in atbi for x in _]
-        q = len(atbi) // 4
-
-        prod = [
-            nodes[0:2], atbi[0:q],
-            nodes[2:4], atbi[q:2 * q],
-            nodes[4:6], atbi[2 * q:3 * q],
-            nodes[6:8], atbi[3 * q:],
-            nodes[8:10]
-        ]
-        prod = [x for _ in prod for x in _]
+        
+        #invert through origin (symmetry)
+        prod = [[-x,-y] for [x,y] in prod][::-1] +prod
         return prod
 
     def proj2dto3d(self, nodes):
@@ -93,13 +96,13 @@ class CoilGenerator:
 
         nodes_2d = self.gen_nodes_2d()
         nodes_3d = self.proj2dto3d(nodes_2d)
-            
+
         x_vals = [x for x, _, _ in nodes_3d]
         y_vals = [y for _, y, _ in nodes_3d]
         z_vals = [z for _, _, z in nodes_3d]
 
         ax.plot(x_vals, y_vals, z_vals)
-
+        
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
@@ -115,6 +118,8 @@ def main():
     parser.add_argument('g', type=float, help='actual gap between coils')
     parser.add_argument('w', type=float, help='width of coil')
     parser.add_argument('d', type=float, help='diameter of epr tube (coil diameter)')
+    parser.add_argument('turns', type=int, help='number of coil turns')
+
     parser.add_argument('filename', help='output filename')
 
     args = parser.parse_args()
@@ -123,11 +128,13 @@ def main():
     g = args.g
     w = args.w
     d = args.d
+    turns = args.turns
     filename = args.filename
 
-    coil_generator = CoilGenerator(h, g, w, d)
+    coil_generator = CoilGenerator(h, g, w, d, turns)
     coil_generator.write_script_to_file(filename)
-    #coil_generator.plot_nodes()
+    coil_generator.plot_nodes()
 
 if __name__ == '__main__':
     main()
+
