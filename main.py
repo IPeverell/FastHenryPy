@@ -79,7 +79,7 @@ class CoilGenerator:
 .Default sigma=5.80e4 \n
 """ + script + """\n
 .external N1 N{:}
-.freq fmin=10e6 fmax=20e6 ndec=0.05
+.freq fmin=1e6 fmax=30e6 ndec=30
 
 .end""".format(len(nodes_3d))
 
