@@ -12,12 +12,14 @@ do
 				turns=1
 				while [ $(echo "(3.14159*$d-$g-$w)/(4*$w)" |bc) -gt $turns ] && [ $(echo "$h/$w" |bc) -gt $turns ]
 				do
-					mkdir ./$h,$g,$w,5,$turns
-					cd ./$h,$g,$w,5,$turns
-					python ~/FastHenryPy/main.py $h $g $w 5 $turns ./FH.inp
+					mkdir "./$h,$g,$w,5,$turns"
+					cd "./$h,$g,$w,5,$turns"
+					python ~/documents/FastHenryPy/main.py $h $g $w 5 $turns ./FH.inp
 					fasthenry ./FH.inp
 					fasthenry ./FH.inp -f simple
 					zbuf ./zbuf zbuffile -a90 -e80
+					cd ".."
+					((turns++)) #increment turns by one until geometry broken
 				done
 			done
 		done
