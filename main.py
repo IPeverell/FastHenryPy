@@ -73,7 +73,7 @@ class CoilGenerator:
         script += "\n\n"
 
         # Generate segments
-        script += "\n".join([f"E{i + 1} N{i + 1} N{i + 2} w=0.038 h=1 wx={x} wy={y} wz=0" for i, [x, y, z] in enumerate(nodes_3d[:-1])])
+        script += "\n".join([f"E{i + 1} N{i + 1} N{i + 2} w=0.038 h={w} wx={x} wy={y} wz=0" for i, [x, y, z] in enumerate(nodes_3d[:-1])])
 
         script = """
 .units mm
