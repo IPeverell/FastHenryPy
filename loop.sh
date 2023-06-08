@@ -1,6 +1,8 @@
 #!/bin/bash
 # Looping over FastHenry and FastHenryPy
 
+original_dir=$(pwd)
+
 for h in $(seq 2 1 10)
 do
 	for g in $(seq 0.1 0.1 1.0)
@@ -18,7 +20,7 @@ do
 					fasthenry ./FH.inp
 					fasthenry ./FH.inp -f simple
 					zbuf ./zbuf zbuffile -a90 -e80
-					cd ".."
+					cd "$original_dir"
 					((turns++)) #increment turns by one until geometry broken
 				done
 			done
