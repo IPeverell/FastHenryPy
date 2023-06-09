@@ -12,7 +12,7 @@ do
 			for d in $(seq 3 1 5)
 			do
 				turns=1
-				while [ $(echo "(3.14159*$d-$g)/(4*($w+$g))" |bc) -gt $turns ] && [ $(echo "2*$turns*w+(2*$turns-1)*g" |bc) -lt $h ]
+				while (( $(echo "(3.14159*$d-$g)/(4*($w+$g)) > $turns" |bc -l) )) && (( $(echo "2*$turns*$w+(2*$turns-1)*$g < $h" |bc -l) ))
 				do
 					mkdir "./$h,$g,$w,5,$turns"
 					cd "./$h,$g,$w,5,$turns"
