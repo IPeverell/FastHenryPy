@@ -1,7 +1,28 @@
 import os
 import scipy.io
 import pandas as pd
+import re
+import numpy as np
 
+def read_Zc(path):
+    # Read the text file
+    with open(path, "r") as file:
+        file_contents = file.read()
+    
+    # Extract frequency and impedance values using regular expressions
+    pattern = r"Impedance matrix for frequency = (\d+(?:\.\d+)?(?:[eE][-+]?\d+)?) \d+ x \d+\n\s+([\d.]+)\s+\+([\d.]+)j"
+    matches = re.findall(pattern, file_contents)
+    
+    # Create numpy arrays for frequency and impedance values
+    frequencies = np.array([float(match[0]) for match in matches])
+    impedances_real = np.array([float(match[1]) for match in matches])
+    impedances_imaginary = np.array([float(match[2]) for match in matches])
+    impedances = impedances_real + 1j * impedances_imaginary
+    
+    # Print the numpy array
+    print("Frequencies:", frequencies)
+    print("Impedances:", impedances)
+    return frequencies,impedances
 # Initialize empty lists to store data
 data = []
 
@@ -20,9 +41,7 @@ for folder_name in os.listdir('.'):
         continue  # Skip if Zc.mat file does not exist
     
     # Load impedance data from Zc.mat file
-    mat = scipy.io.loadmat(mat_file)
-    impedance = mat['Zc']
-    frequency = mat['freq']
+    frequency,impedance = read_Zc(mat_file)
     
     # Create a list of dictionaries containing the data
     for i in range(len(frequency)):
@@ -32,8 +51,8 @@ for folder_name in os.listdir('.'):
             'w': w,
             'd': d,
             'turns': turns,
-            'frequency': frequency[i][0],
-            'impedance': impedance[i][0]
+            'frequency': frequency[i],
+            'impedance': impedance[i]
         })
 
 # Create a pandas DataFrame from the data
