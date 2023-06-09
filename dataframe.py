@@ -3,6 +3,7 @@ import scipy.io
 import pandas as pd
 import re
 import numpy as np
+import altair as alt
 
 def read_Zc(path):
     # Read the text file
@@ -20,8 +21,6 @@ def read_Zc(path):
     impedances = impedances_real + 1j * impedances_imaginary
     
     # Print the numpy array
-    print("Frequencies:", frequencies)
-    print("Impedances:", impedances)
     return frequencies,impedances
 # Initialize empty lists to store data
 data = []
@@ -58,6 +57,39 @@ for folder_name in os.listdir('.'):
 # Create a pandas DataFrame from the data
 df = pd.DataFrame(data)
 
-# Print the resulting DataFrame
+#correct data types
+df.turns = pd.to_numeric(df.turns)
+df.g = pd.to_numeric(df.g)
+df.h = pd.to_numeric(df.h)
+df.w = pd.to_numeric(df.w)
+
+# Print the resulting DataFrame to csv
+#df.to_csv('Zc.csv', index=False)
+df['imped_r'] = np.real(df.impedance)
+df['imped_i'] = np.imag(df.impedance)
+df = df.drop(['impedance'],axis=1)
+
+#Sieve data
+df = df.loc[df['frequency'] == 1.4678e7]
+#df = df.loc[df['h']==0.1]
+df = df.loc[df['g'] == 0.1]
+df = df.loc[df['w']==0.1]
+#df = df.loc[df['turns']==1]
+
 print(df)
+#Visualise the dataframe
+alt.renderers.enable('altair_viewer')
+
+# make the chart
+chart = alt.Chart(df).mark_point().encode(
+    x='imped_r',
+    y='imped_i'
+)
+
+chart = chart + chart.transform_regression('imped_r','imped_i').mark_line()
+chart.interactive().show()
+
+
+
+
 
