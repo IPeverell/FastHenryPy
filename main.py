@@ -26,7 +26,6 @@ class CoilGenerator:
             nodes.append( [ l-(t-1)*g_, self.h/2-(t-1)*g_ ])
             nodes.append( [ l-(t-1)*g_, -self.h/2+(t-1)*g_ ])
             nodes.append( [ t*g_, -self.h/2 +(t-1)*g_ ])
-        nodes.append([self.turns*g_,0])
 
         # Add extra horizontal nodes to replicate curves once projected to 3D space
         s = 30  # Number of segments per horizontal
@@ -56,6 +55,8 @@ class CoilGenerator:
         
         #invert through origin (symmetry)
         prod = [[-x,-y] for [x,y] in prod][::-1] +prod
+
+        prod.insert(0,[-self.turns*g_,-prod[0][1]+g_])
         return prod
 
     def proj2dto3d(self, nodes):
